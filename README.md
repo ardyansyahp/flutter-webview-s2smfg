@@ -1,96 +1,105 @@
-﻿# flutter-webview-s2smfg
+<div align="center">
+  <h1>🏭 S2SMFG WebView & Print Bridge</h1>
+  <p><strong>A specialized Android wrapper connecting cloud-based manufacturing systems directly to local industrial printers.</strong></p>
 
-Aplikasi Android (Flutter) yang berfungsi sebagai **WebView wrapper + Print Bridge** untuk sistem manufacturing [S2SMFG](https://s2smfg.biz.id).
+  [![Flutter Version](https://img.shields.io/badge/Flutter-3.12+-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
+  [![Dart Version](https://img.shields.io/badge/Dart-3.12+-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
+  [![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)](https://android.com)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+</div>
 
----
+<br/>
 
-## Deskripsi
+## 📖 Overview
 
-Aplikasi ini membungkus halaman web S2SMFG (`https://s2smfg.biz.id/manufacturing/inject`) di dalam WebView Android, dan menyediakan **JavaScript Bridge** (`AndroidPrintChannel`) yang memungkinkan halaman web mengirim perintah cetak ZPL langsung ke printer Zebra/ZPL di jaringan lokal pabrik melalui TCP Socket (port 9100).
+The **S2SMFG WebView App** is an Android-based thin client designed specifically for factory floor operations. It wraps the [S2SMFG Production Portal](https://s2smfg.biz.id/manufacturing/inject) in a full-screen kiosk-like experience while providing a critical hardware capability: a **JavaScript-to-TCP Bridge**.
 
-### Arsitektur
+This bridge allows the cloud-based web application to bypass standard browser print dialogues and stream raw **ZPL (Zebra Programming Language)** commands directly to thermal printers on the local factory network (LAN) with zero latency.
 
-```
-Halaman Web Laravel (s2smfg.biz.id)
-    ↓  JavaScript Bridge: AndroidPrintChannel.postMessage({ip, data})
-Flutter WebView (Tablet Android di pabrik)
-    ↓  TCP Socket (LAN lokal, port 9100)
-Printer ZPL / Zebra
-```
+## 🏗️ Architecture
 
----
+By acting as a localized proxy, the application eliminates the need for complex VPNs or print servers:
 
-## Fitur
-
-- ✅ **WebView fullscreen** — membuka halaman production S2SMFG
-- ✅ **Print Bridge** — menerima perintah cetak dari halaman web dan mengirim raw ZPL ke printer melalui TCP Socket (port 9100)
-- ✅ **Camera permission** — meminta izin kamera untuk fitur QR scan di halaman web
-- ✅ **URL Settings** — user bisa mengganti URL target VPS langsung dari dalam aplikasi
-- ✅ **Progress indicator** — loading bar saat halaman sedang dimuat
-
----
-
-## Prasyarat
-
-- Flutter SDK ≥ 3.12.2 / Dart SDK ^3.12.2
-- Android device (minSdk 21)
-- Akses ke jaringan lokal pabrik (untuk koneksi ke printer)
-- Server S2SMFG aktif di `https://s2smfg.biz.id`
-
----
-
-## Dependensi Utama
-
-| Package | Versi | Kegunaan |
-|---------|-------|----------|
-| `webview_flutter` | ^4.8.0 | WebView engine di Android |
-| `permission_handler` | ^11.3.1 | Request izin kamera Android |
-
----
-
-## Cara Build (Android)
-
-```bash
-# 1. Install dependencies
-flutter pub get
-
-# 2. Build APK (debug)
-flutter build apk --debug
-
-# 3. Build APK (release)
-flutter build apk --release
-
-# APK output: build/app/outputs/flutter-apk/app-release.apk
+```mermaid
+sequenceDiagram
+    participant Web as S2SMFG Web (Laravel)
+    participant App as Android App (Flutter Bridge)
+    participant Printer as Zebra Printer (Local LAN)
+    
+    Web->>App: AndroidPrintChannel.postMessage({ip, data})
+    Note over App: Opens TCP Socket (Port 9100)
+    App->>Printer: Raw ZPL String Stream
+    Printer-->>App: Print Confirmation
 ```
 
----
+## ✨ Core Features
 
-## Cara Pakai
+* **🌐 Immersive WebView**: Full-screen, distraction-free environment locked to the production URL, complete with dynamic loading indicators.
+* **🖨️ Direct TCP Print Bridge**: A custom JavaScript interface (`AndroidPrintChannel`) that translates web-triggered events into direct socket connections to Zebra printers (Port 9100).
+* **📷 Hardware Integration**: Seamlessly requests and manages Android camera permissions for in-app QR/Barcode scanning via the web application.
+* **⚙️ Dynamic Configuration**: An accessible settings menu allowing on-site technicians to remap the target VPS/Server URL without reinstalling the application.
 
-1. Install APK di tablet Android yang terhubung ke jaringan LAN pabrik
-2. Buka aplikasi → halaman S2SMFG manufacturing/inject akan terbuka
-3. Untuk mengganti URL server: tap ikon **Settings** (⚙️) di kanan atas
-4. Setting IP printer terlebih dahulu di halaman web S2SMFG sebelum mencetak
+## 🛠️ Tech Stack
 
----
+- **Framework**: Flutter SDK (≥ 3.12.2)
+- **Language**: Dart
+- **Engine Plugins**:
+  - `webview_flutter` (^4.8.0) - High-performance web rendering.
+  - `permission_handler` (^11.3.1) - Native hardware permission routing.
 
-## JavaScript Bridge — Cara Kerja Print
+## 🚀 Getting Started
 
-Halaman web mengirim perintah cetak via JavaScript:
+### Prerequisites
+- Flutter SDK installed and configured.
+- Android Studio / Android SDK (Targeting minSdk 21+).
+- A device connected to the factory LAN (for printing capabilities).
+
+### Installation & Build
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/IT-MadaWikriPSG/Webview-S2SMFG.git
+   cd flutter-webview-s2smfg
+   ```
+
+2. **Fetch Dependencies**
+   ```bash
+   flutter pub get
+   ```
+
+3. **Build the Application**
+   ```bash
+   # Build a debug APK for testing
+   flutter build apk --debug
+
+   # Build a release APK for production deployment
+   flutter build apk --release
+   ```
+   *The output will be located at `build/app/outputs/flutter-apk/app-release.apk`.*
+
+## 🔌 Implementation Guide (Web Side)
+
+To trigger a print job from the S2SMFG web application, the frontend must emit a JSON payload to the injected Android interface:
 
 ```javascript
-// Di halaman Laravel (process.blade.php)
-AndroidPrintChannel.postMessage(JSON.stringify({
-  ip: "192.168.1.100",  // IP printer di LAN pabrik
-  data: "^XA...^XZ"    // ZPL string
-}));
+// Example Laravel Blade / JS Implementation
+if (window.AndroidPrintChannel) {
+    window.AndroidPrintChannel.postMessage(JSON.stringify({
+        ip: "192.168.1.100", // Target printer IP on local LAN
+        data: "^XA^FO50,50^ADN,36,20^FDHello Factory!^FS^XZ" // Raw ZPL payload
+    }));
+} else {
+    console.warn("Print Bridge not detected. Are you in the Android App?");
+}
 ```
 
-App Flutter menangkap pesan ini dan membuka TCP Socket ke printer secara langsung dari tablet, sehingga tidak perlu melewati server VPS.
+## 🔗 Related Ecosystem
+
+This application is part of the broader S2SMFG ecosystem:
+- **Core Platform**: [ardyansyahp/s2smfg](https://github.com/ardyansyahp/s2smfg) (Laravel Backend)
+- **Logistics App**: [ardyansyahp/flutter-driverapp-s2smfg](https://github.com/ardyansyahp/flutter-driverapp-s2smfg)
 
 ---
-
-## Hubungan dengan Repo Lain
-
-- **Backend/Web**: [ardyansyahp/s2smfg](https://github.com/ardyansyahp/s2smfg) — Laravel application (server-side)
-- **Driver App**: [ardyansyahp/flutter-driverapp-s2smfg](https://github.com/ardyansyahp/flutter-driverapp-s2smfg) — Aplikasi driver terpisah
+<div align="center">
+  <sub>Built with ❤️ by the IT Mada Wikri Engineering Team.</sub>
+</div>
