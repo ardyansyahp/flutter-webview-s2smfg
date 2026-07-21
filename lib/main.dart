@@ -38,7 +38,7 @@ class MainWebViewScreen extends StatefulWidget {
 
 class _MainWebViewScreenState extends State<MainWebViewScreen> {
   late final WebViewController _webViewController;
-  String _vpsUrl = 'https://s2smfg.biz.id/manufacturing/inject';
+  String _vpsUrl = 'https://s2smfg.madawikri.co.id/manufacturing/inject';
   bool _isLoading = true;
   double _loadProgress = 0.0;
 
@@ -163,7 +163,7 @@ class _MainWebViewScreenState extends State<MainWebViewScreen> {
             controller: textController,
             decoration: const InputDecoration(
               labelText: 'Domain/IP VPS',
-              hintText: 'https://s2smfg.biz.id/manufacturing/inject',
+              hintText: 'https://s2smfg.madawikri.co.id/manufacturing/inject',
               border: OutlineInputBorder(),
             ),
             keyboardType: TextInputType.url,

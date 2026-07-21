@@ -12,7 +12,7 @@
 
 ## 📖 Overview
 
-The **S2SMFG WebView App** is an Android-based thin client designed specifically for factory floor operations. It wraps the [S2SMFG Production Portal](https://s2smfg.biz.id/manufacturing/inject) in a full-screen kiosk-like experience while providing a critical hardware capability: a **JavaScript-to-TCP Bridge**.
+The **S2SMFG WebView App** is an Android-based thin client designed specifically for factory floor operations. It wraps the [S2SMFG Production Portal](https://s2smfg.madawikri.co.id/manufacturing/inject) in a full-screen kiosk-like experience while providing a critical hardware capability: a **JavaScript-to-TCP Bridge**.
 
 This bridge allows the cloud-based web application to bypass standard browser print dialogues and stream raw **ZPL (Zebra Programming Language)** commands directly to thermal printers on the local factory network (LAN) with zero latency.
 
